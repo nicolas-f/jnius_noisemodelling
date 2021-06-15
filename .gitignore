@@ -3,3 +3,5 @@ target/
 venv/
 dependencies/*.jar
 *.pyd
+*.mv.db
+*.trace.db
