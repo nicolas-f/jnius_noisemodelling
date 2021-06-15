@@ -1,6 +1,6 @@
 import jnius_config
 import os
-
+import time
 jnius_config.add_options('-Xmx4096m')
 jnius_config.set_classpath('dependencies/*')
 from jnius import autoclass
@@ -57,17 +57,23 @@ def main():
         print(Noise_level_from_source().exec(connection, to_groovy_map({"tableSources": "LW_ROADS",
                                                                         "tableBuilding": "BUILDINGS",
                                                                         "tableReceivers": "RECEIVERS",
-                                                                        "confReflOrder": 1,
+                                                                        "confReflOrder": 0,
                                                                         "confDiffVertical": True,
                                                                         "confDiffHorizontal": True,
                                                                         "confSkipLevening": True,
                                                                         "confSkipLnight": True,
-                                                                        "confSkipLden": True})))
+                                                                        "confSkipLden": True,
+                                                                        "confMaxSrcDist": 400,
+                                                                        "confThreadNumber": 8})))
 
-        Export_Table().exec(connection, to_groovy_map({"exportPath": "LDAY_GEOM.shp", "tableToExport": "LDAY_GEOM"}))
+        if not os.path.exists("target/"):
+            os.mkdir("target")
+        Export_Table().exec(connection, to_groovy_map({"exportPath": "target/LDAY_GEOM.shp", "tableToExport": "LDAY_GEOM"}))
     finally:
         connection.close()
 
 
 if __name__ == '__main__':
+    deb = time.time()
     main()
+    print("Done in %s " % (time.strftime("%H:%M:%S", time.gmtime(time.time() - deb))))
